@@ -29,6 +29,7 @@ struct OscString(char P){
             import std.range;
             _data ~= '\0'.repeat(nullCharacters).array;
         }
+        
         unittest{
             import core.exception, std.exception;
             assertThrown!AssertError(OscString("\0string\0mixed\0null\0"));
@@ -73,6 +74,7 @@ string to(T, O)(in O oscString)if(isOscString!(O) && is(T == string)){
     string dataWithNull = oscString._data.stdConvTo!string;
     return dataWithNull;
 }
+
 unittest{
     auto oscString = OscString!('\0')("osc");
     assert(oscString.to!string == "osc\0");

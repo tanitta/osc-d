@@ -56,16 +56,6 @@ struct Message {
     }//private
 }//struct Message
 
-/++
-+/
-// struct AddressPattern {
-//     public{
-//     }//public
-//
-//     private{
-//         AddressPart[] _parts;
-//     }//private
-// }//struct AddressPattern
 alias  AddressPattern = AddressPart[];
 
 /++
@@ -76,7 +66,6 @@ enum TypeTag {
     String = "s",
     Blob   = "b" 
 }//enum TypeTag
-
 
 /++
 +/
@@ -116,6 +105,7 @@ bool isMatch(in AddressPattern addressPattern, const AddressSpace addressSpace){
 }
 
 // TODO enable to work pattern match.
+///
 private bool isMatchRec(in AddressPattern addressPattern, const Container container){
     if(addressPattern.length > 1){
         if(container.hasContainer(addressPattern[0].content)){
@@ -164,7 +154,6 @@ bool hasMethod(in Container container, in string methodName){
     return container._methods.keys.canFind(methodName);
 }
 
-///
 unittest{
     auto container = Container();
     assert(!container.hasMethod("hoge"));
