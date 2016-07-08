@@ -4,12 +4,18 @@ module osc.oscstring;
 +/
 struct OscString(char P){
     public{
+        ///
         enum Prefix = P;
         
-        this(string str)
-        out{
+        ///
+        this(in string str)
+        in{
+            import std.string;
+            assert(str.replace("\0", "") == str);
+        }out{
             assert(_data.length%4 == 0);
         }body{
+            
             if(Prefix != '\0'){
                 _data ~= Prefix;
             }
@@ -21,6 +27,10 @@ struct OscString(char P){
             size_t nullCharacters = 4-_data.length%4;
             import std.range;
             _data ~= '\0'.repeat(nullCharacters).array;
+        }
+        unittest{
+            import core.exception, std.exception;
+            assertThrown!AssertError(OscString("\0string\0mixed\0null\0"));
         }
     }//public
 
@@ -61,6 +71,11 @@ string to(T, O)(in O oscString)if(isOscString!(O) && is(T == string)){
     return dataWithNull;
 }
 unittest{
-    auto oscString = OscString!('/')("hoge");
-    assert(oscString.to!string == "/hoge\0\0\0");
+    auto oscString = OscString!('\0')("osc");
+    assert(oscString.to!string == "osc\0");
+}
+
+unittest{
+    auto oscString = OscString!('\0')("data");
+    assert(oscString.to!string == "data\0\0\0\0");
 }
