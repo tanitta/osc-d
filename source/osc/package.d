@@ -58,6 +58,18 @@ struct Message {
 
 /++
 +/
+// struct AddressPattern {
+//     public{
+//     }//public
+//
+//     private{
+//         AddressPart[] _parts;
+//     }//private
+// }//struct AddressPattern
+alias  AddressPattern = AddressPart[];
+
+/++
++/
 enum TypeTag {
     Int    = "i",
     Float  = "f",
@@ -100,11 +112,36 @@ class AddressSpace {
 
 // TODO
 bool isMatch(in AddressPattern addressPattern, const AddressSpace addressSpace){
-    return false;
+    return addressPattern.isMatchRec(addressSpace._container);
 }
 
-// bool isMatchRec(in Container container, in AddressSpace addressSpace){
-// }
+private bool isMatchRec(in AddressPattern addressPattern, const Container container){
+    if(addressPattern.length > 1){
+        if(container.hasContainer(addressPattern[0].content)){
+            return container.hasContainer(addressPattern[0].content) && addressPattern[1..$].isMatchRec(container._containers[addressPattern[0].content]);
+        }else{
+            return false;
+        }
+    }else{
+        return container.hasMethod(addressPattern[0].content);
+    }
+}
+
+unittest{
+    auto addressSpace = new AddressSpace;
+    addressSpace._container._containers["hoge"] = Container();
+    addressSpace._container._containers["hoge"]._methods["moge"] = Method();
+    
+    {
+        AddressPattern addressPattern = [AddressPart("hoge"), AddressPart("moge")];
+        assert(addressPattern.isMatch(addressSpace));
+    }
+    
+    {
+        AddressPattern addressPattern = [AddressPart("hoge"), AddressPart("invalid")];
+        assert(!addressPattern.isMatch(addressSpace));
+    }
+}
 
 /++
 +/
