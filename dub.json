@@ -1,0 +1,10 @@
+{
+	"name": "osc",
+	"authors": [
+		"tanitta"
+	],
+	"description": "A implemention of Open Sound Control in D programming language.",
+	"copyright": "Copyright © 2016, tanitta",
+	"license": "MIT", 
+	"targetType": "library"
+}
