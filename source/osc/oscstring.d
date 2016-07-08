@@ -10,8 +10,8 @@ struct OscString(char P){
         ///
         this(in string str)
         in{
-            import std.string;
-            assert(str.replace("\0", "") == str);
+            import std.algorithm;
+            assert(!str.canFind("\0"));
         }out{
             assert(_data.length%4 == 0);
         }body{
