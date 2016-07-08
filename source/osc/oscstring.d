@@ -12,6 +12,7 @@ struct OscString(char P){
         in{
             import std.algorithm;
             assert(!str.canFind("\0"));
+            assert(str != "");
         }out{
             assert(_data.length%4 == 0);
         }body{
@@ -31,6 +32,7 @@ struct OscString(char P){
         unittest{
             import core.exception, std.exception;
             assertThrown!AssertError(OscString("\0string\0mixed\0null\0"));
+            assertThrown!AssertError(OscString(""));
         }
     }//public
 
