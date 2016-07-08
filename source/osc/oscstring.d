@@ -54,3 +54,13 @@ unittest{
     static assert(isOscString!(AddressPattern));
     static assert(!isOscString!(string));
 }
+
+string to(T, O)(in O oscString)if(isOscString!(O) && is(T == string)){
+    import std.conv:stdConvTo = to;
+    string dataWithNull = oscString._data.stdConvTo!string;
+    return dataWithNull;
+}
+unittest{
+    auto oscString = OscString!('/')("hoge");
+    assert(oscString.to!string == "/hoge\0\0\0");
+}
