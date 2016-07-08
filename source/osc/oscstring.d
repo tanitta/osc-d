@@ -65,6 +65,7 @@ unittest{
     static assert(!isOscString!(string));
 }
 
+///
 string to(T, O)(in O oscString)if(isOscString!(O) && is(T == string)){
     import std.conv:stdConvTo = to;
     string dataWithNull = oscString._data.stdConvTo!string;
@@ -80,6 +81,7 @@ unittest{
     assert(oscString.to!string == "data\0\0\0\0");
 }
 
+///
 string content(S)(in S oscString)if(isOscString!(S)){
     import std.string;
     string str = oscString.to!string.replace("\0", "");
