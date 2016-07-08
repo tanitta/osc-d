@@ -48,7 +48,7 @@ OscString!('\0') OscString(string str){
 alias TypeTagString = OscString!(',');
 
 ///
-alias AddressPattern = OscString!('/');
+alias AddressPart= OscString!('/');
 
 ///
 template isOscString(S){
@@ -61,7 +61,7 @@ unittest{
     static assert(isOscString!(OscString!('a')));
     static assert(isOscString!(OscString!('\n')));
     static assert(isOscString!(TypeTagString));
-    static assert(isOscString!(AddressPattern));
+    static assert(isOscString!(AddressPart));
     static assert(!isOscString!(string));
 }
 
@@ -78,4 +78,21 @@ unittest{
 unittest{
     auto oscString = OscString!('\0')("data");
     assert(oscString.to!string == "data\0\0\0\0");
+}
+
+string content(S)(in S oscString)if(isOscString!(S)){
+    import std.string;
+    string str = oscString.to!string.replace("\0", "");
+    if(S.Prefix != '\0'){
+        return str[1..$];
+    }else{
+        return str;
+    }
+    // return oscString._data
+}
+
+unittest{
+    import std.string;
+    assert(OscString!('\0')("data").content == "data");
+    assert(OscString!('/')("data").content == "data");
 }
