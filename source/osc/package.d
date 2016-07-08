@@ -110,11 +110,12 @@ class AddressSpace {
     }//private
 }//class AddressSpace
 
-// TODO
+///
 bool isMatch(in AddressPattern addressPattern, const AddressSpace addressSpace){
     return addressPattern.isMatchRec(addressSpace._container);
 }
 
+// TODO enable to work pattern match.
 private bool isMatchRec(in AddressPattern addressPattern, const Container container){
     if(addressPattern.length > 1){
         if(container.hasContainer(addressPattern[0].content)){
@@ -157,11 +158,13 @@ struct Container {
     }//private
 }//struct Container
 
+///
 bool hasMethod(in Container container, in string methodName){
     import std.algorithm;
     return container._methods.keys.canFind(methodName);
 }
 
+///
 unittest{
     auto container = Container();
     assert(!container.hasMethod("hoge"));
@@ -169,6 +172,7 @@ unittest{
     assert(container.hasMethod("hoge"));
 }
 
+///
 bool hasContainer(in Container container, in string containerName){
     import std.algorithm;
     return container._containers.keys.canFind(containerName);
