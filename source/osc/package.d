@@ -47,14 +47,44 @@ struct BundleElement {
 +/
 struct Message {
     public{
+        ///
+        string toString()const{
+            //TODO add args;
+            import std.algorithm:map, fold;
+            import std.conv;
+            // return _addressPattern.to!string ~ _typeTagString.to!string ~ _args.fold!((a, b)=> a.to!string ~ b.to!string);
+            return _addressPattern.map!(oStr=> oStr.to!string)
+                                  .fold!((a, b)=> a~b)
+                                  .to!string 
+            ~ _typeTagString.to!string;
+        }
+        unittest{
+            auto message = Message();
+            message._addressPattern = [AddressPart("hoge"), AddressPart("moge")];
+            import std.stdio; 
+            import std.conv; 
+            message.to!string.writeln;
+        }
+
+        ///
+        ubyte[] opCast(T:ubyte[])(){
+            //TODO add args;
+            return _addressPattern.to!(ubyte[]) ~ _typeTagString.to!(ubyte[]);
+        }
+        unittest{
+            auto message = Message();
+            // message.to!string == 
+        }
     }//public
 
     private{
         AddressPattern _addressPattern;
         TypeTagString _typeTagString;
-        // args
+        OscString!'\0'[] _args;
     }//private
 }//struct Message
+
+
 
 alias  AddressPattern = AddressPart[];
 

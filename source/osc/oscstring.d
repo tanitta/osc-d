@@ -49,6 +49,26 @@ struct OscString(char P){
             assertThrown!AssertError(OscString("\0string\0mixed\0null\0"));
             assertThrown!AssertError(OscString(""));
         }
+        
+        ///
+        string toString()const{
+            import std.conv:to;
+            import std.algorithm;
+            return _data.map!(c => c.to!char).to!string;
+        }
+
+        unittest{
+            auto oscString = OscString!('\0')("osc");
+            import std.stdio;
+            import std.conv;
+            assert(oscString.to!string == "osc\0");
+        }
+
+        unittest{
+            import std.conv;
+            auto oscString = OscString!('\0')("data");
+            assert(oscString.to!string == "data\0\0\0\0");
+        }
     }//public
 
     private{
@@ -82,27 +102,11 @@ unittest{
     static assert(!isOscString!(string));
 }
 
-///
-T to(T:string, O:OscString!(C), char C)(in O oscString){
-    import std.conv:stdConvTo = to;
-    import std.algorithm;
-    return oscString._data.map!(c => c.stdConvTo!char).stdConvTo!string;
-}
-
-unittest{
-    auto oscString = OscString!('\0')("osc");
-    import std.stdio;
-    assert(oscString.to!string == "osc\0");
-}
-
-unittest{
-    auto oscString = OscString!('\0')("data");
-    assert(oscString.to!string == "data\0\0\0\0");
-}
 
 ///
 string content(S)(in S oscString)if(isOscString!(S)){
     import std.string;
+    import std.conv;
     string str = oscString.to!string.replace("\0", "");
     if(S.Prefix != '\0'){
         return str[1..$];
@@ -114,6 +118,7 @@ string content(S)(in S oscString)if(isOscString!(S)){
 
 unittest{
     import std.string;
+    import std.stdio;
     assert(OscString!('\0')("data").content == "data");
     assert(OscString!('/')("data").content == "data");
 }
