@@ -1,5 +1,21 @@
 module osc.oscstring;
 
+T addNullSuffix(T:string)(T str){
+    size_t nullCharacters = 4-str.length%4;
+    import std.range;
+    import std.conv;
+    import std.algorithm;
+    return str ~ ('\0'.repeat(nullCharacters).array).map!(c => cast(immutable(char))c).array;
+}
+
+T addNullSuffix(T:ubyte[])(T str){
+    return cast(T)addNullSuffix(cast(string)str);
+}
+
+unittest{
+    assert("osc".addNullSuffix == "osc\0");
+}
+
 /++
 +/
 struct OscString(char P){
@@ -25,9 +41,7 @@ struct OscString(char P){
                 _data ~= c;
             }
             
-            size_t nullCharacters = 4-_data.length%4;
-            import std.range;
-            _data ~= '\0'.repeat(nullCharacters).array;
+            _data = _data.addNullSuffix;
         }
         
         unittest{
@@ -38,7 +52,7 @@ struct OscString(char P){
     }//public
 
     private{
-        char[] _data;
+        ubyte[] _data;
     }//private
 }//struct OscString
 
@@ -69,14 +83,15 @@ unittest{
 }
 
 ///
-string to(T, O)(in O oscString)if(isOscString!(O) && is(T == string)){
+T to(T:string, O:OscString!(C), char C)(in O oscString){
     import std.conv:stdConvTo = to;
-    string dataWithNull = oscString._data.stdConvTo!string;
-    return dataWithNull;
+    import std.algorithm;
+    return oscString._data.map!(c => c.stdConvTo!char).stdConvTo!string;
 }
 
 unittest{
     auto oscString = OscString!('\0')("osc");
+    import std.stdio;
     assert(oscString.to!string == "osc\0");
 }
 
