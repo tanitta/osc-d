@@ -9,20 +9,16 @@ alias  AddressPattern = AddressPart[];
 struct Message {
     public{
         ///
+        T opCast(T:ubyte[])(){
+            return _opCast!(T)();
+        }
+        
+        ///
         string toString()const
         in{
             assert(_args.length > 0);
         }body{
-            import std.algorithm:map, fold;
-            import std.conv;
-            // return _addressPattern.to!string ~ _typeTagString.to!string ~ _args.fold!((a, b)=> a.to!string ~ b.to!string);
-            return _addressPattern.map!(oStr=> oStr.to!string)
-                                  .fold!((a, b)=> a~b)
-                                  .to!string
-                 ~ _typeTagString.to!string
-                 ~ _args.map!(oStr=> oStr.to!string)
-                        .fold!((a, b)=> a~b)
-                        .to!string;
+            return _opCast!string();
         }
         
         unittest{
@@ -33,21 +29,6 @@ struct Message {
             import std.stdio; 
             import std.conv; 
             assert(message.to!string == "/foo\0\0\0\0,s\0\0hoge\0\0\0\0");
-        }
-
-        ///
-        ubyte[] opCast(T:ubyte[])()const{
-            ubyte[] b = [0, 0, 0, 0];
-            import std.conv;
-            import std.algorithm;
-            // return _typeTagString.to!(ubyte[]);
-            return  _addressPattern.map!(oStr => oStr.to!(ubyte[]))
-                                  .fold!((a, b)=> a~b)
-                                  .to!(ubyte[]).dup
-                 ~ _typeTagString.to!(ubyte[])
-                 ~ _args.map!(oStr=> oStr.to!(ubyte[]))
-                        .fold!((a, b)=> a~b)
-                        .to!(ubyte[]);
         }
         
         ///
@@ -71,6 +52,20 @@ struct Message {
         AddressPattern _addressPattern;
         TypeTagString _typeTagString;
         OscString!'\0'[] _args;
+        
+        T _opCast(T)()const{
+            T b = [0, 0, 0, 0];
+            import std.conv;
+            import std.algorithm;
+            return  _addressPattern.map!(oStr => oStr.to!(T))
+                                  .fold!((a, b)=> a~b)
+                                  .to!(T).dup
+                 ~ _typeTagString.to!(T)
+                 ~ _args.map!(oStr=> oStr.to!(T))
+                        .fold!((a, b)=> a~b)
+                        .to!(T);
+        }
+        
     }//private
 }//struct Message
 
