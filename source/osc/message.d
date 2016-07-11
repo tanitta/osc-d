@@ -32,6 +32,30 @@ struct Message {
         }
         
         ///
+        void addressPattern(in string str){
+            import std.array;
+            import std.algorithm;
+            _addressPattern = str.split("/")
+                                 .filter!(a => a != "")
+                                 .map!(pattern => AddressPart(pattern))
+                                 .array;
+        }
+        unittest{
+            auto message = Message();
+            message.addressPattern = "/foo/bar";
+            import std.stdio;
+            import std.conv;
+            assert(message._addressPattern == [AddressPart("foo"), AddressPart("bar")]);
+        }
+        
+        ///
+        void addressPattern(AddressPattern p){
+            import std.array;
+            import std.algorithm;
+            _addressPattern = p;
+        }
+        
+        ///
         void addValue(T)(T v){
             import std.conv;
             char c;
