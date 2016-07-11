@@ -95,7 +95,7 @@ struct Message {
 
 unittest{
     auto message = Message();
-    message._addressPattern = [AddressPart("foo")];
+    message.addressPattern = [AddressPart("foo")];
     message.addValue(1000);
     message.addValue(-1);
     message.addValue("hello");

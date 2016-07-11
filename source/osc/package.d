@@ -6,6 +6,8 @@ import osc.message;
 +/
 struct Packet {
     public{
+        //TODO toString
+        //TODO to!(ubyte[])
     }//public
 
     private{
@@ -19,28 +21,49 @@ struct Packet {
 +/
 struct Bundle {
     public{
+        //TODO toString
+        //TODO to!(ubyte[])
     }//public
 
     private{
         OscString!('\0') _header = OscString("#bundle");
-        // _timeTag
-        //first size
-        //first content
-        
-        //secont size
-        //secont content 
+        TimeTag _timeTag;
+        BundleElement[] _bundleElements;
     }//private
 }//struct Bundle
 
 /++
 +/
+struct TimeTag {
+    public{
+        // void currentTime(t){
+        //     - std.datetime.Date(1900, 1, 1) 
+        // }
+        //TODO set 
+        //TODO toString
+        // ubyte[] opCast(ubyte[])()const{
+            //TODO 
+        // }
+    }//public
+
+    private{
+        //TODO
+        // Duration _time;
+    }//private
+}//struct TimeTag
+
+/++
++/
 struct BundleElement {
     public{
+        //TODO toString
+        //TODO to!(ubyte[])
     }//public
 
     private{
         int _size;
-        //content 
+        Message _message;
+        Bundle _bundle;
     }//private
 }//struct BundleElement
 
