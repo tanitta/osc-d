@@ -1,5 +1,6 @@
 module osc.oscstring;
 
+///
 T addNullSuffix(T:string)(T str){
     size_t nullCharacters = 4-str.length%4;
     import std.range;
@@ -8,6 +9,7 @@ T addNullSuffix(T:string)(T str){
     return str ~ ('\0'.repeat(nullCharacters).array).map!(c => cast(immutable(char))c).array;
 }
 
+///
 T addNullSuffix(T:ubyte[])(T str){
     return cast(T)addNullSuffix(cast(string)str);
 }
@@ -31,6 +33,7 @@ struct OscString(char P){
             this(buffer);
         }
         
+        ///
         this(in float v){
             import std.bitmanip;
             ubyte[] buffer = [0, 0, 0, 0];
@@ -55,6 +58,7 @@ struct OscString(char P){
             _data = _data.addNullSuffix;
         }
         
+        ///
         this(in ubyte[] arr)
         in{
             import std.algorithm;
@@ -70,7 +74,6 @@ struct OscString(char P){
                 _data ~= c;
             }
         }
-        
         
         unittest{
             import core.exception, std.exception;
@@ -98,10 +101,12 @@ struct OscString(char P){
             assert(oscString.to!string == "data\0\0\0\0");
         }
         
+        ///
         ubyte[] opCast(T:ubyte[])()const{
             return _data.dup;
         }
         
+        ///
         bool isEmpty()const{
             return _data.length == 0;
         }
@@ -120,7 +125,7 @@ OscString!('\0') OscString(T)(in T v){
 ///
 alias TypeTagString = OscString!(',');
 
-
+///
 void add(T:TypeTagString)(ref T oscString, char t){
     if(oscString.isEmpty){
         oscString = TypeTagString(t);
@@ -128,6 +133,7 @@ void add(T:TypeTagString)(ref T oscString, char t){
         oscString = TypeTagString(oscString.content ~ t);
     }
 }
+
 /++
 +/
 enum TypeTag {
@@ -136,7 +142,6 @@ enum TypeTag {
     String = "s",
     Blob   = "b" 
 }//enum TypeTag
-
 
 ///
 alias AddressPart= OscString!('/');
@@ -155,7 +160,6 @@ unittest{
     static assert(isOscString!(AddressPart));
     static assert(!isOscString!(string));
 }
-
 
 ///
 string content(S)(in S oscString)if(isOscString!(S)){
