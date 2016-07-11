@@ -24,6 +24,21 @@ struct OscString(char P){
         enum Prefix = P;
         
         ///
+        this(in int v){
+            import std.bitmanip;
+            ubyte[] buffer = [0, 0, 0, 0];
+            buffer.write!int(v, 0);
+            this(buffer);
+        }
+        
+        this(in float v){
+            import std.bitmanip;
+            ubyte[] buffer = [0, 0, 0, 0];
+            buffer.write!float(v, 0);
+            this(buffer);
+        }
+        
+        ///
         this(in string str)
         in{
             import std.algorithm;
@@ -32,17 +47,30 @@ struct OscString(char P){
         }out{
             assert(_data.length%4 == 0);
         }body{
-            
-            if(Prefix != '\0'){
-                _data ~= Prefix;
-            }
-            
-            foreach (ref c; str) {
-                _data ~= c;
-            }
-            
+            import std.conv;
+            import std.algorithm;
+            import std.array;
+            ubyte[] arr = str.map!(c => c.to!char.to!ubyte).array;
+            this(arr);
             _data = _data.addNullSuffix;
         }
+        
+        this(in ubyte[] arr)
+        in{
+            import std.algorithm;
+            // assert(!arr.canFind(null));
+            assert(arr.length > 0);
+        }body{
+            if(Prefix != '\0'){
+                import std.conv;
+                _data ~= Prefix.to!ubyte;
+            }
+            
+            foreach (ref c; arr) {
+                _data ~= c;
+            }
+        }
+        
         
         unittest{
             import core.exception, std.exception;
@@ -69,6 +97,14 @@ struct OscString(char P){
             auto oscString = OscString!('\0')("data");
             assert(oscString.to!string == "data\0\0\0\0");
         }
+        
+        ubyte[] opCast(T:ubyte[])()const{
+            return _data.dup;
+        }
+        
+        bool isEmpty()const{
+            return _data.length == 0;
+        }
     }//public
 
     private{
@@ -77,12 +113,30 @@ struct OscString(char P){
 }//struct OscString
 
 ///
-OscString!('\0') OscString(string str){
-    return OscString!('\0')(str);
+OscString!('\0') OscString(T)(in T v){
+    return OscString!('\0')(v);
 }
 
 ///
 alias TypeTagString = OscString!(',');
+
+
+void add(T:TypeTagString)(ref T oscString, char t){
+    if(oscString.isEmpty){
+        oscString = TypeTagString(t);
+    }else{
+        oscString = TypeTagString(oscString.content ~ t);
+    }
+}
+/++
++/
+enum TypeTag {
+    Int    = "i",
+    Float  = "f",
+    String = "s",
+    Blob   = "b" 
+}//enum TypeTag
+
 
 ///
 alias AddressPart= OscString!('/');
