@@ -1,6 +1,7 @@
 module osc;
 import osc.oscstring;
 import osc.message;
+import osc.timetag;
 
 /++
 +/
@@ -31,26 +32,6 @@ struct Bundle {
         BundleElement[] _bundleElements;
     }//private
 }//struct Bundle
-
-/++
-+/
-struct TimeTag {
-    public{
-        // void currentTime(t){
-        //     - std.datetime.Date(1900, 1, 1) 
-        // }
-        //TODO set 
-        //TODO toString
-        // ubyte[] opCast(ubyte[])()const{
-            //TODO 
-        // }
-    }//public
-
-    private{
-        //TODO
-        // Duration _time;
-    }//private
-}//struct TimeTag
 
 /++
 +/
