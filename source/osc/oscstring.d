@@ -110,6 +110,15 @@ struct OscString(char P){
         bool isEmpty()const{
             return _data.length == 0;
         }
+        
+        size_t size()const{
+            return _data.length;
+        }
+        unittest{
+            import std.conv;
+            auto oscString = OscString!('\0')("data");
+            assert(oscString.size == 8);
+        }
     }//public
 
     private{

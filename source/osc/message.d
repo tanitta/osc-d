@@ -4,6 +4,19 @@ import osc.oscstring;
 ///
 alias  AddressPattern = AddressPart[];
 
+///
+size_t size(in AddressPattern addressPattern){
+    import std.algorithm;
+    return addressPattern.map!(p => AddressPart.Prefix~p.content)
+                         .fold!"a~b"
+                         .addNullSuffix
+                         .length;
+}
+unittest{
+    AddressPattern pattern = [AddressPart("foo"), AddressPart("bar")];
+    assert(pattern.size == 12);
+}
+
 /++
 +/
 struct Message {
@@ -69,6 +82,25 @@ struct Message {
             
             _typeTagString.add(c);
             _args ~= OscString(v);
+        }
+        
+        ///
+        size_t size()const{
+            import std.algorithm;
+            return _addressPattern.size + 
+                   _typeTagString.size + 
+                   _args.map!(a => a.size())
+                        .fold!"a+b";
+        }
+        unittest{
+            auto message = Message();
+            message.addressPattern = [AddressPart("foo")];
+            message.addValue(1000);
+            message.addValue(-1);
+            message.addValue("hello");
+            message.addValue(1.234f);
+            message.addValue(5.678f);
+            assert(message.size == 40);
         }
     }//public
 

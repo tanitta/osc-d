@@ -25,6 +25,11 @@ struct TimeTag {
         ubyte[] opCast(T:ubyte[])()const{
             return _data.dup;
         }
+        
+        ///
+        size_t size()const{
+            return 8;
+        }
     }//public
 
     private{

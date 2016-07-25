@@ -13,38 +13,127 @@ struct Packet {
 
     private{
         int _size;
-        Message _message;
         Bundle _bundle;
+        Message _message;
     }//private
 }//struct Packet
 
+import std.datetime;
 /++
 +/
 struct Bundle {
     public{
-        //TODO toString
-        //TODO to!(ubyte[])
+        ///
+        this(in BundleElement[] bundleElement, in SysTime utcSysTime, in bool isImmediately = false){
+            _timeTag = TimeTag(utcSysTime, isImmediately);
+            _bundleElements = bundleElement;
+        }
+        
+        ///
+        string toString()const{
+            return _opCast!string;
+        }
+        
+        ///
+        ubyte[] opCast(T:ubyte[])()const{
+            return _opCast!T;
+        }
+        
+        ///
+        size_t size()const{
+            import std.conv;
+            import std.algorithm;
+            return _header.size + 
+                   _timeTag.size + 
+                   _bundleElements.map!(e => e.size)
+                                  .sum;
+        }
     }//public
 
     private{
-        OscString!('\0') _header = OscString("#bundle");
-        TimeTag _timeTag;
-        BundleElement[] _bundleElements;
+        immutable OscString!('\0') _header = OscString("#bundle");
+        const TimeTag _timeTag;
+        const BundleElement[] _bundleElements;
+        
+        T _opCast(T)()const{
+            import std.conv;
+            import std.algorithm;
+            return _header.to!T ~
+                   _timeTag.to!T ~
+                   _bundleElements.map!(e => e.to!T)
+                                  .fold!"a~b";
+        }
     }//private
 }//struct Bundle
 
 /++
 +/
+//TODO support for bundle
 struct BundleElement {
     public{
-        //TODO toString
-        //TODO to!(ubyte[])
+        this(in Message message){
+            _hasMessage = true;
+            _message = message;
+            _size = message.size;
+            
+            import std.conv;
+            import std.bitmanip;
+            ubyte[] buffer = [0, 0, 0, 0];
+            buffer.write!int(message.size.to!int, 0);
+            _sizeUbyte = buffer;
+        }
+        
+        //TODO support for bundle
+        // this(in Bundle bundle){
+        //     _bundle = bundle;
+        // }
+        
+        
+        ///
+        string toString()const{
+            import std.conv:to;
+            import std.algorithm;
+            if(_hasMessage){
+                return _size.to!string ~ _message.to!string;
+            }else{
+                return "";
+            }
+            //TODO support for bundle
+        }
+        
+        ///
+        ubyte[] opCast(T:ubyte[])()const{
+            import std.conv;
+            if(_hasMessage){
+                return _sizeUbyte ~ _message.to!(ubyte[]);
+            }
+            
+            //TODO support for bundle
+            if(_hasBundle){
+                //TODO append size to bundle.
+                return _bundle.to!(ubyte[]);
+            }
+        }
+        
+        size_t size()const{
+            return _size;
+        }
     }//public
 
     private{
-        int _size;
-        Message _message;
-        Bundle _bundle;
+        size_t _size;
+        ubyte[] _sizeUbyte;
+        bool _hasMessage = true;
+        bool _hasBundle = true;
+        const Message _message;
+        const Bundle _bundle;
+        
+        // ubyte[] size()const{
+        //     import std.bitmanip;
+        //     ubyte[] buffer = [0, 0, 0, 0];
+        //     buffer.write!int(_size, 0);
+        //     return buffer;
+        // }
     }//private
 }//struct BundleElement
 
