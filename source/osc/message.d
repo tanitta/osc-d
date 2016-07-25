@@ -41,6 +41,7 @@ struct Message {
     public{
         ///
         this(in ubyte[] message){
+            import std.algorithm;
             
             ubyte[] remaining = message.dup;
             
