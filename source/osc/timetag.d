@@ -15,6 +15,11 @@ struct TimeTag {
         }
         
         ///
+        this(in ubyte[] timeTag){
+            _data = timeTag;
+        }
+        
+        ///
         string toString()const{
             import std.conv:to;
             import std.algorithm;
@@ -48,7 +53,7 @@ struct TimeTag {
             return buffer;
         }
         
-        ubyte[] _data;
+        const ubyte[] _data;
     }//private
 }//struct TimeTag
 unittest{

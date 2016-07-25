@@ -17,10 +17,78 @@ unittest{
     assert(pattern.size == 12);
 }
 
+AddressPattern toAddressPattern(in ubyte[] b){
+    import std.algorithm;
+    import std.conv;
+    import std.array;
+    string[] parts = b.map!(c => c.to!char)
+                      .to!string[1..$]
+                      .replace("\0", "")
+                      .split("/");
+    return parts.map!(p => AddressPart(p))
+                .array;
+}
+unittest{
+    const ubyte[] b = [0x2f, 0x66, 0x6f, 0x6f, 0x0, 0x0, 0x0, 0x0];
+    import std.algorithm;
+    import std.stdio;
+    assert(b.toAddressPattern == [AddressPart("foo")]);
+}
+
 /++
 +/
 struct Message {
     public{
+        ///
+        this(in ubyte[] message){
+            //TODO split
+            import std.algorithm;
+            
+            ubyte[] remaining = message.dup;
+            const ubyte[] addressPattern = remaining[0..remaining.countUntil(0)];
+            _addressPattern = addressPattern.toAddressPattern;
+            
+            remaining = remaining[remaining.countUntil(0)..$];
+            remaining = remaining[remaining.countUntil!"a!=b"(0)..$];
+            
+            assert(remaining.length%4 == 0);
+            
+            const ubyte[] typeTagString = remaining[1..remaining.countUntil(0)/4*4+4];
+            _typeTagString = TypeTagString(typeTagString);
+            
+            remaining = remaining[remaining.countUntil(0)/4*4+4..$];
+            
+            assert(remaining.length%4 == 0);
+            
+            foreach (ref c; _typeTagString.content) {
+                switch (c) {
+                    case 'i':
+                        _args ~= OscString(remaining[0..4]);
+                        remaining = remaining[4..$];
+                        break;
+                    case 'f':
+                        _args ~= OscString(remaining[0..4]);
+                        remaining = remaining[4..$];
+                        break;
+                    case 's':
+                        _args ~= OscString(remaining[0..remaining.countUntil(0)/4*4+4]);
+                        remaining = remaining[remaining.countUntil(0)/4*4+4..$];
+                        break;
+                    case 'b':
+                        _args ~= OscString(remaining[0..4]);
+                        remaining = remaining[4..$];
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        
+        unittest{
+            ubyte[] buffer = [0x2f, 0x66, 0x6f, 0x6f, 0x0, 0x0, 0x0, 0x0, 0x2c, 0x69, 0x69, 0x73, 0x66, 0x66, 0x0, 0x0, 0x0, 0x0, 0x3, 0xe8, 0xff, 0xff, 0xff, 0xff, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x0, 0x0, 0x0, 0x3f, 0x9d, 0xf3, 0xb6, 0x40, 0xb5, 0xb2, 0x2d];
+            auto message = Message(buffer);
+        }
+        
         ///
         T opCast(T:ubyte[])(){
             return _opCast!(T)();
@@ -78,7 +146,9 @@ struct Message {
                 c = 'f';
             }else if(is(T == string)){
                 c = 's';
-            }//TODO blob
+            }else if(is(T == ubyte[])){
+                c = 'b';
+            }
             
             _typeTagString.add(c);
             _args ~= OscString(v);
@@ -137,4 +207,18 @@ unittest{
     import std.conv; 
     ubyte[] a = [0x2f, 0x66, 0x6f, 0x6f, 0x0, 0x0, 0x0, 0x0, 0x2c, 0x69, 0x69, 0x73, 0x66, 0x66, 0x0, 0x0, 0x0, 0x0, 0x3, 0xe8, 0xff, 0xff, 0xff, 0xff, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x0, 0x0, 0x0, 0x3f, 0x9d, 0xf3, 0xb6, 0x40, 0xb5, 0xb2, 0x2d];
     assert(message.to!(ubyte[]) == a);
+}
+
+unittest{
+    auto ans = Message();
+    ans.addressPattern = [AddressPart("foo")];
+    ans.addValue(1000);
+    ans.addValue(-1);
+    ans.addValue("hello");
+    ans.addValue(1.234f);
+    ans.addValue(5.678f);
+
+    ubyte[] a = [0x2f, 0x66, 0x6f, 0x6f, 0x0, 0x0, 0x0, 0x0, 0x2c, 0x69, 0x69, 0x73, 0x66, 0x66, 0x0, 0x0, 0x0, 0x0, 0x3, 0xe8, 0xff, 0xff, 0xff, 0xff, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x0, 0x0, 0x0, 0x3f, 0x9d, 0xf3, 0xb6, 0x40, 0xb5, 0xb2, 0x2d];
+    auto message = Message(a);
+    assert(message == ans);
 }

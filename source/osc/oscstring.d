@@ -57,6 +57,11 @@ struct OscString(char P){
             this(arr);
             _data = _data.addNullSuffix;
         }
+        unittest{
+            import core.exception, std.exception;
+            assertThrown!AssertError(OscString("\0string\0mixed\0null\0"));
+            assertThrown!AssertError(OscString(""));
+        }
         
         ///
         this(in ubyte[] arr)
@@ -74,11 +79,11 @@ struct OscString(char P){
                 _data ~= c;
             }
         }
-        
         unittest{
-            import core.exception, std.exception;
-            assertThrown!AssertError(OscString("\0string\0mixed\0null\0"));
-            assertThrown!AssertError(OscString(""));
+            ubyte[] buffer = [0x66, 0x6f, 0x6f, 0x00];
+            import std.stdio;
+            import std.conv;
+            assert(OscString!('\0')(buffer).to!string == "foo\0");
         }
         
         ///
@@ -107,6 +112,20 @@ struct OscString(char P){
         }
         
         ///
+        T opCast(T:int)()const if(Prefix == '\0'){
+            import std.bitmanip;
+            ubyte[] b = _data.dup;
+            return b.read!T();
+        }
+        
+        ///
+        T opCast(T:float)()const if(Prefix == '\0'){
+            import std.bitmanip;
+            ubyte[] b = _data.dup;
+            return b.read!T();
+        }
+        
+        ///
         bool isEmpty()const{
             return _data.length == 0;
         }
@@ -114,6 +133,7 @@ struct OscString(char P){
         size_t size()const{
             return _data.length;
         }
+        
         unittest{
             import std.conv;
             auto oscString = OscString!('\0')("data");
@@ -125,6 +145,19 @@ struct OscString(char P){
         ubyte[] _data;
     }//private
 }//struct OscString
+
+unittest{
+    const ubyte[] buffer = [0x00, 0x00, 0x6f, 0x00];
+    import std.conv;
+    assert(OscString!('\0')(buffer).to!int == 28416);
+}
+
+unittest{
+    const ubyte[] buffer = [0x3f, 0x9d, 0xf3, 0xb6];
+    import std.conv;
+    import std.math;
+    assert(approxEqual(OscString!('\0')(buffer).to!float, 1.234));
+}
 
 ///
 OscString!('\0') OscString(T)(in T v){
