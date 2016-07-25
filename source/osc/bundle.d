@@ -21,8 +21,7 @@ struct Bundle {
             ubyte[] elements = bundle[16..$].dup;
             do{
                 import std.bitmanip;
-                ubyte[] sizeBuffer = elements[0..4];
-                size_t size_n = sizeBuffer.read!uint;
+                size_t size_n = elements[0..4].peek!uint;
                 
                 _bundleElements ~= BundleElement(elements[0..4+size_n]);
                 elements = elements[4+size_n..$];

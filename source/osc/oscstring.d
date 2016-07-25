@@ -114,15 +114,13 @@ struct OscString(char P){
         ///
         T opCast(T:int)()const if(Prefix == '\0'){
             import std.bitmanip;
-            ubyte[] b = _data.dup;
-            return b.read!T();
+            return _data.peek!T();
         }
         
         ///
         T opCast(T:float)()const if(Prefix == '\0'){
             import std.bitmanip;
-            ubyte[] b = _data.dup;
-            return b.read!T();
+            return _data.peek!T();
         }
         
         ///
