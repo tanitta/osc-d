@@ -41,10 +41,9 @@ struct Message {
     public{
         ///
         this(in ubyte[] message){
-            //TODO split
-            import std.algorithm;
             
             ubyte[] remaining = message.dup;
+            
             const ubyte[] addressPattern = remaining[0..remaining.countUntil(0)];
             _addressPattern = addressPattern.toAddressPattern;
             
