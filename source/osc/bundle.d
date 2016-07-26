@@ -51,6 +51,10 @@ struct Bundle {
                    _bundleElements.map!(e => e.size)
                                   .sum;
         }
+        
+        const(BundleElement[]) bundleElement()const{
+            return _bundleElements[];
+        }
     }//public
 
     private{
@@ -68,6 +72,16 @@ struct Bundle {
         }
     }//private
 }//struct Bundle
+
+unittest{
+    ubyte[] b = [35, 98, 117, 110, 100, 108, 101, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 32, 47, 111, 115, 99, 105, 108, 108, 97, 116, 111, 114, 47, 52, 47, 102, 114, 101, 113, 117, 101, 110, 99, 121, 0, 44, 102, 0, 0, 67, 222, 0, 0];
+    auto bundle = Bundle(b);
+    
+    assert(bundle.bundleElement[0].message.addressPattern == [AddressPart("oscillator"), AddressPart("4"), AddressPart("frequency")]);
+    assert(bundle.bundleElement[0].message.typeTagString == TypeTagString("f"));
+    import std.conv;
+    assert(bundle.bundleElement[0].message.args[0].to!float == 444.0f);
+}
 
 /++
 +/
@@ -87,10 +101,17 @@ struct BundleElement {
             _sizeUbyte = buffer;
         }
         
-        //TODO support for bundle
-        // this(in Bundle bundle){
-        //     _bundle = bundle;
-        // }
+        this(in Bundle bundle){
+            _hasBundle = true;
+            _bundle = bundle;
+            _size = bundle.size;
+            
+            import std.conv;
+            import std.bitmanip;
+            ubyte[] buffer = [0, 0, 0, 0];
+            buffer.write!int(bundle.size.to!int, 0);
+            _sizeUbyte = buffer;
+        }
         
         ///
         this(in ubyte[] bundleElement){
@@ -113,10 +134,11 @@ struct BundleElement {
             import std.algorithm;
             if(_hasMessage){
                 return _size.to!string ~ _message.to!string;
+            }else if(_hasBundle){
+                return _size.to!string ~ _bundle.to!string;
             }else{
                 return "";
             }
-            //TODO support for bundle
         }
         
         ///
@@ -124,17 +146,23 @@ struct BundleElement {
             import std.conv;
             if(_hasMessage){
                 return _sizeUbyte ~ _message.to!(ubyte[]);
-            }
-            
-            //TODO support for bundle
-            if(_hasBundle){
-                //TODO append size to bundle.
-                return _bundle.to!(ubyte[]);
+            }else if(_hasBundle){
+                return _sizeUbyte ~ _bundle.to!(ubyte[]);
+            }else{
+                return [];
             }
         }
         
         size_t size()const{
             return _size;
+        }
+        
+        const(Message) message()const{
+            return _message;
+        }
+        
+        const(Bundle) bundle()const{
+            return _bundle;
         }
     }//public
 
@@ -145,12 +173,15 @@ struct BundleElement {
         bool _hasBundle = true;
         const Message _message;
         const Bundle _bundle;
-        
-        // ubyte[] size()const{
-        //     import std.bitmanip;
-        //     ubyte[] buffer = [0, 0, 0, 0];
-        //     buffer.write!int(_size, 0);
-        //     return buffer;
-        // }
     }//private
 }//struct BundleElement
+unittest{
+    ubyte[] bundle = [35, 98, 117, 110, 100, 108, 101, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 32, 47, 111, 115, 99, 105, 108, 108, 97, 116, 111, 114, 47, 52, 47, 102, 114, 101, 113, 117, 101, 110, 99, 121, 0, 44, 102, 0, 0, 67, 222, 0, 0];
+    ubyte[] size = [0, 0, 0, 0];
+    import std.bitmanip;
+    import std.conv;
+    size.write!int(bundle.length.to!int, 0);
+    auto bundleElement = BundleElement(size ~ bundle);
+    
+    assert(bundleElement.bundle.bundleElement[0].message.addressPattern == [AddressPart("oscillator"), AddressPart("4"), AddressPart("frequency")]);
+}

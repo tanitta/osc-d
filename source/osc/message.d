@@ -107,6 +107,19 @@ struct Message {
         }
         
         ///
+        const(AddressPattern) addressPattern()const{
+            return _addressPattern;
+        }
+        
+        const(TypeTagString) typeTagString()const{
+            return _typeTagString;
+        }
+        
+        const(OscString!'\0'[]) args()const{
+            return _args;
+        }
+        
+        ///
         void addressPattern(in string str){
             import std.array;
             import std.algorithm;
