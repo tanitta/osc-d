@@ -52,6 +52,7 @@ struct Bundle {
                                   .sum;
         }
         
+        ///
         const(BundleElement[]) bundleElement()const{
             return _bundleElements[];
         }
@@ -85,7 +86,6 @@ unittest{
 
 /++
 +/
-//TODO support for bundle
 struct BundleElement {
     public{
         ///
@@ -101,6 +101,7 @@ struct BundleElement {
             _sizeUbyte = buffer;
         }
         
+        ///
         this(in Bundle bundle){
             _hasBundle = true;
             _bundle = bundle;
@@ -157,10 +158,12 @@ struct BundleElement {
             return _size;
         }
         
+        ///
         const(Message) message()const{
             return _message;
         }
         
+        ///
         const(Bundle) bundle()const{
             return _bundle;
         }

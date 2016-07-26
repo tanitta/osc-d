@@ -111,10 +111,12 @@ struct Message {
             return _addressPattern;
         }
         
+        ///
         const(TypeTagString) typeTagString()const{
             return _typeTagString;
         }
         
+        ///
         const(OscString!'\0'[]) args()const{
             return _args;
         }

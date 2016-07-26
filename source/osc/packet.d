@@ -2,19 +2,22 @@ module osc.packet;
 
 import osc.message;
 import osc.bundle;
+
+//TODO support for bundle
 /++
 +/
-//TODO support for bundle
 struct Packet {
     public{
         ///
         this(Message message){
             _hasMessage = true;
+            _message = message;
         }
 
         ///
         this(Bundle bundle){
             _hasBundle = true;
+            _bundle = bundle;
         }
         
         ///
@@ -24,6 +27,9 @@ struct Packet {
             
             if(_hasBundle){
                 _bundle = Bundle(packet);
+            }
+            if(_hasMessage){
+                _message = Message(packet);
             }
         }
 
@@ -37,6 +43,15 @@ struct Packet {
             return _opCast!T;
         }
 
+        ///
+        const(Bundle) bundle()const{
+            return _bundle;
+        }
+        
+        ///
+        const(Message) message()const{
+            return _message;
+        }
     }//public
 
     private{
@@ -58,3 +73,6 @@ struct Packet {
         }
     }//private
 }//struct Packet
+unittest{
+    //TODO
+}
