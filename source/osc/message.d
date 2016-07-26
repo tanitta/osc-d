@@ -42,20 +42,14 @@ struct Message {
         ///
         this(in ubyte[] message){
             import std.algorithm;
-            
-            ubyte[] remaining = message.dup;
-            
-            const ubyte[] addressPattern = remaining[0..remaining.countUntil(0)];
+            const(ubyte)[] addressPattern = message[0..message.countUntil(0)];
             _addressPattern = addressPattern.toAddressPattern;
-            
-            remaining = remaining[remaining.countUntil(0)..$];
-            remaining = remaining[remaining.countUntil!"a!=b"(0)..$];
+            const(ubyte)[] remaining = message[message.countUntil(0)..$].find!"a!=0";
             
             assert(remaining.length%4 == 0);
             
-            const ubyte[] typeTagString = remaining[1..remaining.countUntil(0)/4*4+4];
+            const(ubyte)[] typeTagString = remaining[1..remaining.countUntil(0)/4*4+4];
             _typeTagString = TypeTagString(typeTagString);
-            
             remaining = remaining[remaining.countUntil(0)/4*4+4..$];
             
             assert(remaining.length%4 == 0);
@@ -79,7 +73,7 @@ struct Message {
                         remaining = remaining[4..$];
                         break;
                     default:
-                        break;
+                        assert(0);
                 }
             }
         }
