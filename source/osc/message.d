@@ -1,21 +1,7 @@
 module osc.message;
 import osc.oscstring;
-
-///
-alias  AddressPattern = AddressPart[];
-
-///
-size_t size(in AddressPattern addressPattern){
-    import std.algorithm;
-    return addressPattern.map!(p => AddressPart.Prefix~p.content)
-                         .fold!"a~b"
-                         .addNullSuffix
-                         .length;
-}
-unittest{
-    AddressPattern pattern = [AddressPart("foo"), AddressPart("bar")];
-    assert(pattern.size == 12);
-}
+import osc.typetagstring;
+import osc.addresspattern;
 
 AddressPattern toAddressPattern(in ubyte[] b){
     import std.algorithm;
@@ -34,9 +20,6 @@ unittest{
     import std.stdio;
     assert(b.toAddressPattern == [AddressPart("foo")]);
 }
-
-import osc.typetagstring;
-
 /++
 +/
 struct Message {

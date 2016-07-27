@@ -78,6 +78,7 @@ unittest{
     ubyte[] b = [35, 98, 117, 110, 100, 108, 101, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 32, 47, 111, 115, 99, 105, 108, 108, 97, 116, 111, 114, 47, 52, 47, 102, 114, 101, 113, 117, 101, 110, 99, 121, 0, 44, 102, 0, 0, 67, 222, 0, 0];
     auto bundle = Bundle(b);
     
+    import osc.addresspattern;
     assert(bundle.elements[0].message.addressPattern == [AddressPart("oscillator"), AddressPart("4"), AddressPart("frequency")]);
     import osc.typetagstring;
     assert(bundle.elements[0].message.typeTagString == TypeTagString("f"));
@@ -197,5 +198,6 @@ unittest{
     size.write!int(bundle.length.to!int, 0);
     auto bundleElement = BundleElement(size ~ bundle);
     
+    import osc.addresspattern;
     assert(bundleElement.bundle.elements[0].message.addressPattern == [AddressPart("oscillator"), AddressPart("4"), AddressPart("frequency")]);
 }

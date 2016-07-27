@@ -163,10 +163,6 @@ OscString!('\0') OscString(T)(in T v){
     return OscString!('\0')(v);
 }
 
-
-///
-alias AddressPart= OscString!('/');
-
 ///
 template isOscString(S){
     enum bool isOscString = __traits(compiles, (){
@@ -178,8 +174,6 @@ unittest{
     static assert(isOscString!(OscString!('a')));
     static assert(isOscString!(OscString!('\n')));
     static assert(!isOscString!(string));
-    
-    static assert(isOscString!(AddressPart));
 }
 
 ///
