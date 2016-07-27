@@ -11,7 +11,7 @@ struct Bundle {
         ///
         this(BundleElement[] bundleElements, in SysTime utcSysTime, in bool isImmediately = false){
             _timeTag = TimeTag(utcSysTime, isImmediately);
-            _bundleElements = bundleElements;
+            _elements = bundleElements;
         }
         
         ///
@@ -23,7 +23,7 @@ struct Bundle {
                 import std.bitmanip;
                 size_t size_n = elements[0..4].peek!uint;
                 
-                _bundleElements ~= BundleElement(elements[0..4+size_n]);
+                _elements ~= BundleElement(elements[0..4+size_n]);
                 elements = elements[4+size_n..$];
             }while(elements != []);
         }
@@ -48,27 +48,27 @@ struct Bundle {
             import std.algorithm;
             return _header.size + 
                    _timeTag.size + 
-                   _bundleElements.map!(e => e.size)
+                   _elements.map!(e => e.size)
                                   .sum;
         }
         
         ///
-        const(BundleElement[]) bundleElement()const{
-            return _bundleElements[];
+        const(BundleElement)[] elements()const{
+            return _elements[];
         }
     }//public
 
     private{
         immutable OscString!('\0') _header = OscString("#bundle");
         const TimeTag _timeTag;
-        BundleElement[] _bundleElements;
+        BundleElement[] _elements;
         
         T _opCast(T)()const{
             import std.conv;
             import std.algorithm;
             return _header.to!T ~
                    _timeTag.to!T ~
-                   _bundleElements.map!(e => e.to!T)
+                   _elements.map!(e => e.to!T)
                                   .fold!"a~b";
         }
     }//private
@@ -78,10 +78,10 @@ unittest{
     ubyte[] b = [35, 98, 117, 110, 100, 108, 101, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 32, 47, 111, 115, 99, 105, 108, 108, 97, 116, 111, 114, 47, 52, 47, 102, 114, 101, 113, 117, 101, 110, 99, 121, 0, 44, 102, 0, 0, 67, 222, 0, 0];
     auto bundle = Bundle(b);
     
-    assert(bundle.bundleElement[0].message.addressPattern == [AddressPart("oscillator"), AddressPart("4"), AddressPart("frequency")]);
-    assert(bundle.bundleElement[0].message.typeTagString == TypeTagString("f"));
+    assert(bundle.elements[0].message.addressPattern == [AddressPart("oscillator"), AddressPart("4"), AddressPart("frequency")]);
+    assert(bundle.elements[0].message.typeTagString == TypeTagString("f"));
     import std.conv;
-    assert(bundle.bundleElement[0].message.args[0].to!float == 444.0f);
+    assert(bundle.elements[0].message.args[0].to!float == 444.0f);
 }
 
 /++
@@ -167,6 +167,16 @@ struct BundleElement {
         const(Bundle) bundle()const{
             return _bundle;
         }
+        
+        ///
+        bool hasMessage()const{
+            return _hasMessage;
+        }
+        
+        ///
+        bool hasBundle()const{
+            return _hasBundle;
+        }
     }//public
 
     private{
@@ -186,5 +196,5 @@ unittest{
     size.write!int(bundle.length.to!int, 0);
     auto bundleElement = BundleElement(size ~ bundle);
     
-    assert(bundleElement.bundle.bundleElement[0].message.addressPattern == [AddressPart("oscillator"), AddressPart("4"), AddressPart("frequency")]);
+    assert(bundleElement.bundle.elements[0].message.addressPattern == [AddressPart("oscillator"), AddressPart("4"), AddressPart("frequency")]);
 }

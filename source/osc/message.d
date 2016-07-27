@@ -117,6 +117,14 @@ struct Message {
         }
         
         ///
+        TypeTag[] typeTags()const{
+            import std.algorithm;
+            import std.conv;
+            import std.array;
+            return _typeTagString.content.map!(c => c.to!TypeTag).array;
+        }
+        
+        ///
         const(OscString!'\0'[]) args()const{
             return _args;
         }

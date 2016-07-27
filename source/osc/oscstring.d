@@ -178,10 +178,10 @@ void add(T:TypeTagString)(ref T oscString, char t){
 /++
 +/
 enum TypeTag {
-    Int    = "i",
-    Float  = "f",
-    String = "s",
-    Blob   = "b" 
+    Int    = 'i', 
+    Float  = 'f', 
+    String = 's', 
+    Blob   = 'b', 
 }//enum TypeTag
 
 ///

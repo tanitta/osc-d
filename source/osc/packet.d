@@ -52,6 +52,9 @@ struct Packet {
         const(Message) message()const{
             return _message;
         }
+        
+        bool hasMessage()const{return _hasMessage;}
+        bool hasBundle()const{return _hasBundle;}
     }//public
 
     private{
