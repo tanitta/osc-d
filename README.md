@@ -8,8 +8,6 @@ Client is still a work in progress.
 #Example
 
 ```
-// Server
-
 static import osc;
 
 void main() {
@@ -31,8 +29,11 @@ void main() {
                     case osc.TypeTag.String:
                         m.args[i].to!string.writeln;
                         break;
-                    default:
+                    case osc.TypeTag.Blob:
+                        m.args[i].to!(ubyte[]).writeln;
                         break;
+                    default:
+                        assert(0);
                 }
             }
         }
