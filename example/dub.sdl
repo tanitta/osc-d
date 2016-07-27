@@ -1,0 +1,6 @@
+name "oscexample"
+description "osc example"
+copyright "Copyright © 2015, tanitta"
+authors "tanitta"
+
+dependency "osc" path="../../osc"
