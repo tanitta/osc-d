@@ -5,3 +5,4 @@ public import osc.message;
 public import osc.bundle;
 public import osc.packet;
 public import osc.server;
+public import osc.typetagstring;

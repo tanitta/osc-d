@@ -79,6 +79,7 @@ unittest{
     auto bundle = Bundle(b);
     
     assert(bundle.elements[0].message.addressPattern == [AddressPart("oscillator"), AddressPart("4"), AddressPart("frequency")]);
+    import osc.typetagstring;
     assert(bundle.elements[0].message.typeTagString == TypeTagString("f"));
     import std.conv;
     assert(bundle.elements[0].message.args[0].to!float == 444.0f);

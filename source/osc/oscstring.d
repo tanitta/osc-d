@@ -163,26 +163,6 @@ OscString!('\0') OscString(T)(in T v){
     return OscString!('\0')(v);
 }
 
-///
-alias TypeTagString = OscString!(',');
-
-///
-void add(T:TypeTagString)(ref T oscString, char t){
-    if(oscString.isEmpty){
-        oscString = TypeTagString(t);
-    }else{
-        oscString = TypeTagString(oscString.content ~ t);
-    }
-}
-
-/++
-+/
-enum TypeTag {
-    Int    = 'i', 
-    Float  = 'f', 
-    String = 's', 
-    Blob   = 'b', 
-}//enum TypeTag
 
 ///
 alias AddressPart= OscString!('/');
@@ -197,9 +177,9 @@ template isOscString(S){
 unittest{
     static assert(isOscString!(OscString!('a')));
     static assert(isOscString!(OscString!('\n')));
-    static assert(isOscString!(TypeTagString));
-    static assert(isOscString!(AddressPart));
     static assert(!isOscString!(string));
+    
+    static assert(isOscString!(AddressPart));
 }
 
 ///

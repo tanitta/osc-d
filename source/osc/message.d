@@ -35,6 +35,8 @@ unittest{
     assert(b.toAddressPattern == [AddressPart("foo")]);
 }
 
+import osc.typetagstring;
+
 /++
 +/
 struct Message {
