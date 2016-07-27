@@ -28,18 +28,12 @@ class Server {
         ~this(){
         }
         const(Message) popMessage(){
-            // _thread.join;
-            // scope(exit){_thread.start;}
             const(Message) m = _messages[0];
-            // if(_messages.length != 0){
-                _messages = _messages[1..$];
-            // }
+            _messages = _messages[1..$];
             return m;
         }
         
         bool hasMessage(){
-            // _thread.join;
-            // scope(exit){_thread.start;}
             return _messages.length != 0;
         }
     }//public
