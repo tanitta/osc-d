@@ -33,7 +33,7 @@ class Server {
             return m;
         }
         
-        bool hasMessage(){
+        bool hasMessage()const{
             return _messages.length != 0;
         }
     }//public
