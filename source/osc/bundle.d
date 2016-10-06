@@ -69,7 +69,7 @@ struct Bundle {
             return _header.to!T ~
                    _timeTag.to!T ~
                    _elements.map!(e => e.to!T)
-                                  .fold!"a~b";
+                                  .reduce!"a~b";
         }
     }//private
 }//struct Bundle

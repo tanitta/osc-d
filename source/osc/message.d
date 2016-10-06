@@ -162,7 +162,7 @@ struct Message {
             return _addressPattern.size + 
                    _typeTagString.size + 
                    _args.map!(a => a.size())
-                        .fold!"a+b";
+                        .reduce!"a+b";
         }
         unittest{
             auto message = Message();
@@ -186,11 +186,11 @@ struct Message {
             import std.conv;
             import std.algorithm;
             return  _addressPattern.map!(oStr => oStr.to!(T))
-                                   .fold!((a, b)=> a~b)
+                                   .reduce!((a, b)=> a~b)
                                    .to!(T).dup
                  ~ _typeTagString.to!(T)
                  ~ _args.map!(oStr=> oStr.to!(T))
-                        .fold!((a, b)=> a~b)
+                        .reduce!((a, b)=> a~b)
                         .to!(T);
         }
         

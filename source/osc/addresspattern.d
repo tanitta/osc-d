@@ -16,7 +16,7 @@ alias  AddressPattern = AddressPart[];
 size_t size(in AddressPattern addressPattern){
     import std.algorithm;
     return addressPattern.map!(p => AddressPart.Prefix~p.content)
-                         .fold!"a~b"
+                         .reduce!"a~b"
                          .addNullSuffix
                          .length;
 }
