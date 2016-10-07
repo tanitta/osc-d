@@ -1,6 +1,10 @@
 osc
 ====
 
+[![Dub version](https://img.shields.io/dub/v/osc-d.svg)](https://code.dlang.org/packages/osc-d)
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/tanitta/osc-d/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/tanitta/osc-d.svg?branch=master)](https://travis-ci.org/tanitta/osc-d)
+
 ##Description
 
 A implemention of Open Sound Control in D programming language.
