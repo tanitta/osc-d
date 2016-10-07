@@ -1,4 +1,4 @@
-module osc.receiver;
+module osc.server;
 
 import std.socket;
 import std.container;
@@ -9,7 +9,7 @@ import osc.bundle;
 
 /++
 +/
-class Receiver{
+class Server{
     public{
         ///
         this(ushort port){
@@ -50,7 +50,7 @@ class Receiver{
             }
         }
     }//private
-}//class Receiver
+}//class Server
 
 private{
     const(Message)[] messages(in Packet packet){

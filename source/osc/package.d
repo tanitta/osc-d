@@ -6,5 +6,5 @@ public import osc.timetag;
 public import osc.message;
 public import osc.bundle;
 public import osc.packet;
-public import osc.receiver;
-public import osc.sender;
+public import osc.server;
+public import osc.client;

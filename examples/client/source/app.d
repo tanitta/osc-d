@@ -1,7 +1,7 @@
 static import osc;
 
 void main() {
-    auto sender = new osc.Sender(8000);
+    auto client = new osc.Client(8000);
     auto message = osc.Message();
     
     message.addressPattern = "/foo";
@@ -11,5 +11,5 @@ void main() {
     message.addValue(1.234f);
     message.addValue(5.678f);
     
-    sender.push(message);
+    client.push(message);
 }

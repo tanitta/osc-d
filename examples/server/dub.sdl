@@ -1,4 +1,4 @@
-name "oscexample-sender"
+name "server"
 description "osc example"
 copyright "Copyright © 2015, tanitta"
 authors "tanitta"

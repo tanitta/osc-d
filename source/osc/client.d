@@ -1,4 +1,4 @@
-module osc.sender;
+module osc.client;
 
 import std.socket;
 import osc.message;
@@ -6,7 +6,7 @@ import osc.packet;
 import osc.bundle;
 
 ///
-class Sender{
+class Client{
     public{
         ///
         this(ushort port){
@@ -21,21 +21,21 @@ class Sender{
         }
         
         ///
-        Sender push(in Message message){
+        Client push(in Message message){
             const packet = Packet(message);
             push(packet);
             return this;
         }
         
         ///
-        Sender push(in Bundle bundle){
+        Client push(in Bundle bundle){
             const packet = Packet(bundle);
             push(packet);
             return this;
         }
         
         //TODO
-        Sender push(in Packet packet){
+        Client push(in Packet packet){
             import std.conv;
             ubyte[] b = packet.to!(ubyte[]);
             _socket.sendTo(b, _address);
@@ -46,4 +46,4 @@ class Sender{
         Socket _socket;
         Address _address;
     }
-}//class Sender
+}//class Client

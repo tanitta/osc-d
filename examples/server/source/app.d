@@ -1,12 +1,12 @@
 static import osc;
 
 void main() {
-    auto receiver = new osc.Receiver(8000);
+    auto server = new osc.Server(8000);
     while(true){
         import std.stdio;
         "popMessage".writeln;
-        while(receiver.hasMessage){
-            auto m = receiver.popMessage;
+        while(server.hasMessage){
+            auto m = server.popMessage;
             foreach (int i, ref t; m.typeTags) {
                 import std.conv;
                 switch (t) {

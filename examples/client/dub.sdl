@@ -1,4 +1,4 @@
-name "oscexample-receiver"
+name "client"
 description "osc example"
 copyright "Copyright © 2015, tanitta"
 authors "tanitta"
