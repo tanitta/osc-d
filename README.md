@@ -1,4 +1,4 @@
-osc
+osc-d
 ====
 
 [![Dub version](https://img.shields.io/dub/v/osc-d.svg)](https://code.dlang.org/packages/osc-d)
