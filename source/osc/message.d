@@ -69,7 +69,7 @@ struct Message {
         }
         
         ///
-        T opCast(T:ubyte[])(){
+        T opCast(T:ubyte[])()const{
             return _opCast!(T)();
         }
         

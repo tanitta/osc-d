@@ -7,3 +7,4 @@ public import osc.message;
 public import osc.bundle;
 public import osc.packet;
 public import osc.receiver;
+public import osc.sender;

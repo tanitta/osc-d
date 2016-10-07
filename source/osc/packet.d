@@ -9,13 +9,13 @@ import osc.bundle;
 struct Packet {
     public{
         ///
-        this(Message message){
+        this(in Message message){
             _hasMessage = true;
             _message = message;
         }
 
         ///
-        this(Bundle bundle){
+        this(in Bundle bundle){
             _hasBundle = true;
             _bundle = bundle;
         }
@@ -39,8 +39,8 @@ struct Packet {
         }
 
         ///
-        ubyte[] opCast(T:ubyte[])()const{
-            return _opCast!T;
+        T opCast(T:ubyte[])()const{
+            return _opCast!(ubyte[])();
         }
 
         ///
@@ -61,8 +61,8 @@ struct Packet {
         bool _hasMessage;
         bool _hasBundle;
 
-        Bundle _bundle;
-        Message _message;
+        const Bundle _bundle;
+        const Message _message;
 
         T _opCast(T)()const{
             import std.conv;
@@ -78,4 +78,15 @@ struct Packet {
 }//struct Packet
 unittest{
     //TODO
+    Message message = Message();
+    message.addressPattern = "/foo";
+    message.addValue(1000);
+    message.addValue(-1);
+    message.addValue("hello");
+    message.addValue(1.234f);
+    message.addValue(5.678f);
+    Packet packet = Packet(message);
+    import std.conv;
+    ubyte[] b = packet.to!(ubyte[]);
+    assert(b.length != 0);
 }
