@@ -7,7 +7,7 @@ osc-d
 
 ##Description
 
-A implemention of Open Sound Control in D programming language.
+An implementation of Open Sound Control in D programming language.
 
 ##Examples
 
