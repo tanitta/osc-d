@@ -4,9 +4,8 @@ void main() {
     auto server = new osc.Server(8000);
     while(true){
         import std.stdio;
-        "popMessage".writeln;
-        while(server.hasMessage){
-            auto m = server.popMessage;
+        auto ms = server.popMessages;
+        foreach (m; ms) {
             foreach (int i, ref t; m.typeTags) {
                 import std.conv;
                 switch (t) {
@@ -29,6 +28,6 @@ void main() {
         }
         import std.datetime;
         import core.thread;
-        Thread.sleep(1.dur!"seconds");
+        Thread.sleep(10.dur!"msecs");
     }
 }

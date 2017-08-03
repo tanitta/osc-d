@@ -3,9 +3,11 @@ module osc.server;
 import std.socket;
 import std.container;
 import core.thread;
+import core.sync.mutex;
 import osc.message;
 import osc.packet;
 import osc.bundle;
+
 
 /++
 +/
@@ -19,6 +21,7 @@ class Server{
         ///
         this(InternetAddress internetAddress){
             import std.socket;
+            _messages = new shared Messages;
             auto socket = new UdpSocket();
             socket.bind (internetAddress);
             auto _thread = new Thread(() => receive(socket)).start;
@@ -27,30 +30,60 @@ class Server{
         ///
         ~this(){
         }
-        const(Message) popMessage(){
-            const(Message) m = _messages[0];
-            _messages = _messages[1..$];
-            return m;
+        const(Message)[] popMessages(){
+            // const(Message) m = _messages[0];
+            // _messages = _messages[1..$];
+            return _messages.popMessages;
         }
         
-        bool hasMessage()const{
-            return _messages.length != 0;
-        }
+        // bool hasMessage()const{
+        //     auto numMessages = _messages.length;
+        //
+        //     return _messages.length != 0;
+        // }
     }//public
 
     private{
-        const(Message)[] _messages = [];
+        shared Messages _messages;
         Thread _thread;
         
         void receive(Socket socket){
             ubyte[512] recvRaw;
             while(true){
                 size_t l = socket.receive(recvRaw);
-                _messages ~= Packet(recvRaw[0..l]).messages;
+                _messages.pushMessages(Packet(recvRaw[0..l]).messages);
             }
         }
     }//private
 }//class Server
+
+/++
++/
+private class Messages {
+    public{
+        Mutex mtx;
+        this()shared{
+            mtx = new shared Mutex();
+        }
+
+        const(Message)[] popMessages()shared{
+            mtx.lock; scope(exit)mtx.unlock;
+            const(Message)[] result = cast(const(Message)[])(_contents);
+            _contents = [];
+            return result;
+        }
+
+        void pushMessages(const(Message)[] messages)shared{
+            mtx.lock;
+            _contents ~= cast(shared(const(Message)[]))messages;
+            mtx.unlock;
+        }
+    }//public
+
+    private{
+        const(Message)[] _contents;
+    }//private
+}//class Messages
 
 private{
     const(Message)[] messages(in Packet packet){

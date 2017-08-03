@@ -3,4 +3,4 @@ description "osc example"
 copyright "Copyright © 2015, tanitta"
 authors "tanitta"
 
-dependency "osc" path="../../"
+dependency "osc-d" path="../../"
