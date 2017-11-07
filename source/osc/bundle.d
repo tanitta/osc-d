@@ -83,7 +83,7 @@ unittest{
     import osc.typetagstring;
     assert(bundle.elements[0].message.typeTagString == TypeTagString("f"));
     import std.conv;
-    assert(bundle.elements[0].message.args[0].to!float == 444.0f);
+    assert(bundle.elements[0].message.arg!float(0) == 444.0f);
 }
 
 /++

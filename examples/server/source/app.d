@@ -10,16 +10,16 @@ void main() {
                 import std.conv;
                 switch (t) {
                     case osc.TypeTag.Int:
-                        m.args[i].to!int.writeln;
+                        m.arg!int(i).writeln;
                         break;
                     case osc.TypeTag.Float:
-                        m.args[i].to!float.writeln;
+                        m.arg!float(i).writeln;
                         break;
                     case osc.TypeTag.String:
-                        m.args[i].to!string.writeln;
+                        m.arg!string(i).writeln;
                         break;
                     case osc.TypeTag.Blob:
-                        m.args[i].to!(ubyte[]).writeln;
+                        m.arg!(ubyte[])(i).writeln;
                         break;
                     default:
                         assert(0);
